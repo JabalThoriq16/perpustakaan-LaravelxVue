@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +21,16 @@ class AuthorController extends Controller
     public function index()
     {
         return view('admin.author.index');
+    }
+
+    public function api()
+    {
+        $authors =Author::all();
+        $datatables = datatables()->of($authors)
+                                ->addColumn('date',function($author){
+                                    return formatDates($author->create_at);
+                                })->addIndexColumn();
+        return $datatables->make(true);
     }
 
     /**
@@ -35,7 +51,15 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'name'=>'required',
+            'email'=>'required',
+            'phone_number'=>'required',
+            'address'=>'required'
+        ]);
+
+        Author::create($request->all());
+        return redirect('authors');
     }
 
     /**
@@ -57,7 +81,7 @@ class AuthorController extends Controller
      */
     public function edit(Author $author)
     {
-        //
+       
     }
 
     /**
@@ -69,7 +93,15 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        //
+        $this->validate($request,[
+            'name'=>'required',
+            'email'=>'required',
+            'phone_number'=>'required',
+            'address'=>'required'
+        ]);
+
+        $author->update($request->all());
+        return redirect('authors');
     }
 
     /**
@@ -80,6 +112,7 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        //
+        $author->delete();
+        return redirect('authors');
     }
 }

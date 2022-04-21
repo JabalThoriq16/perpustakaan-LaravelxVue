@@ -23,8 +23,17 @@
                             <td>{{$key+1}}</td>
                             <td>{{$catalog->name}}</td>
                             <td class="text-center">{{count($catalog->books)}}</td>
-                            <td>{{date('d M Y'. strtotime($catalog->create_at))}}</td>
-                            <td><a href="{{url('catologs/'.$catalog->id)}}"></a></td>
+                            <td>{{formatDates($catalog->create_at)}}</td>
+                            <td class="text-center" >
+                                <div class="row justify-content-center">
+                                    <a class="btn btn-warning btn-sm m-2" href="{{url('catalogs/'.$catalog->id).'/edit'}}">Edit</a>
+                                    <form action="{{url('catalogs', ['id'=>$catalog->id])}}" method="POST" class="" >
+                                        <input class="btn btn-danger btn-sm m-2" type="submit" value="Delete" onclick="return confirm('Apa kamu yakin ?')">
+                                        @method('delete')
+                                        @csrf
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     @endforeach                    
                 </tbody>
@@ -32,13 +41,8 @@
         </div>
 
         <div class="card-footer clearfix">
-            <ul class="pagination pagination-sm m-0 float-right">
-                <li class="page-item"><a class="page-link" href="#">«</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">»</a></li>
-            </ul>
+            {{ $catalogs->links() }}
+        </div>
         </div>
     </div>
 @endsection
